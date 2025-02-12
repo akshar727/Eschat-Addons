@@ -1,19 +1,15 @@
 package com.bunny.eschatAddons;
 
-import com.bunny.eschatAddons.Commands.NoDT;
 import com.bunny.eschatAddons.GUI.GuiEschat;
 import com.bunny.eschatAddons.config.ConfigHandler;
 import com.bunny.eschatAddons.features.NoDTListener;
+import com.bunny.eschatAddons.features.PartyCommands;
 import com.bunny.eschatAddons.HUD.NoDTHUD;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Keyboard;
+import com.bunny.eschatAddons.features.KeybindHandler;
 
 @Mod(modid = eschatAddons.MODID, version = eschatAddons.VERSION)
 public class eschatAddons {
@@ -31,20 +27,14 @@ public class eschatAddons {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        System.out.println("[eschatAddons] Registering commands...");
+        System.out.println("[eschatAddons] Registering event handlers...");
 
-        MinecraftForge.EVENT_BUS.register(new Object() {
-            @SubscribeEvent
-            public void onKeyInput(InputEvent.KeyInputEvent event) {
-                if (Keyboard.isKeyDown(Keyboard.KEY_EQUALS)) { // Press 'G' to open GUI
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiEschat());
-                    System.out.println("Keybind triggered: Opening GUI");
-                }
-            }
-        });
+        // Register keybinds
+        MinecraftForge.EVENT_BUS.register(new KeybindHandler());
 
-        // Register NoDTListener (renamed from NoDT to avoid conflicts)
+        // Register other event handlers
         MinecraftForge.EVENT_BUS.register(new NoDTListener());
+        MinecraftForge.EVENT_BUS.register(new PartyCommands());
         MinecraftForge.EVENT_BUS.register(new NoDTHUD());
     }
 }

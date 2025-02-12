@@ -2,15 +2,22 @@ package com.bunny.eschatAddons.features;
 
 import com.bunny.eschatAddons.config.ConfigHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.util.EnumChatFormatting;
+
+import com.bunny.eschatAddons.features.DTListener;
+import org.lwjgl.Sys;
+import tv.twitch.chat.Chat;
 
 public class NoDTListener {
 
     private long executeAtTime = 0; // Time when the command should be executed
+    private boolean DtCalled = true;
     private boolean commandQueued = false; // Flag to track if a command is scheduled
 
     public NoDTListener() {
@@ -23,17 +30,39 @@ public class NoDTListener {
         if (!ConfigHandler.NoDTEnabled) return;
         if (event.isCanceled()) return;
 
-        // Remove Minecraft color codes and hidden characters
-        String formattedMessage = event.message.getFormattedText()
-                .replaceAll("§.", "") // Removes all Minecraft color codes
-                .replaceAll("[^\\x20-\\x7E]", "") // Removes non-ASCII characters
-                .trim()
-                .replaceAll("\\s+", " "); // Normalize spaces
 
-        if (formattedMessage.contains("rf 6> elEXTRA STATS 6<r")) {
+        // Remove Minecraft color codes and hidden characters
+        String unFormattedMessage = event.message.getUnformattedText().trim()
+                .replace("[MVP+]", "")
+                .replace("[MVP]", "")
+                .replace("[VIP]", "")
+                .replace("[VIP+]", "")
+                .replace("[MVP++]", "")
+                .replace("From ", "") // Remove "From "
+                .trim(); // Trim any leading/trailing spaces // Normalize spaces
+
+        System.out.println("Formatted Message: " + unFormattedMessage);
+
+        if (!DtCalled && unFormattedMessage.contains("!dt" )){
+            DtCalled = true;
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_PURPLE + "" + EnumChatFormatting.BOLD + "[EschatAddons] " + EnumChatFormatting.GOLD + "Downtime Called!"));
+        }
+
+        if (unFormattedMessage.contains("> EXTRA STATS <")) {
+
+            if (DtCalled) {
+                DtCalled = false;
+                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc Downtime Called!");
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Downtime Called.. Cancelling Requeue"));
+                return;
+            }
+
             System.out.println("Detected EXTRA STATS message! Command will be sent after delay...");
             executeAtTime = System.currentTimeMillis() + ConfigHandler.NoDTDelay;
             commandQueued = true; // Mark command for future execution
+            if (commandQueued){
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Downtime NOT called, requeuing"));
+            }
         }
     }
 
