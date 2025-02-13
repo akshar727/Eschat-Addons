@@ -28,7 +28,7 @@ public class DungeonFloorCommands {
         if (command) {
             String[] parts = unFormattedMessage.split("!", 2);
             // if parts[1] is more than three characters, ignore
-            if (parts[1].length() > 3) return;
+            if (parts[1].length() > 2) return;
             try {
                 boolean isMasterMode = (Character.toLowerCase(parts[1].charAt(0)) == 'm');
                 int floor = parts[1].charAt(1) - '0';

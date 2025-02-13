@@ -1,15 +1,15 @@
 package com.bunny.eschatAddons;
 
-import com.bunny.eschatAddons.GUI.GuiEschat;
+import com.bunny.eschatAddons.Commands.CommandEschat;
+import com.bunny.eschatAddons.Commands.NoDT;
 import com.bunny.eschatAddons.config.ConfigHandler;
-import com.bunny.eschatAddons.features.NoDTListener;
-import com.bunny.eschatAddons.features.PartyCommands;
+import com.bunny.eschatAddons.features.*;
 import com.bunny.eschatAddons.HUD.NoDTHUD;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import com.bunny.eschatAddons.features.KeybindHandler;
 
 @Mod(modid = eschatAddons.MODID, version = eschatAddons.VERSION)
 public class eschatAddons {
@@ -34,7 +34,13 @@ public class eschatAddons {
 
         // Register other event handlers
         MinecraftForge.EVENT_BUS.register(new NoDTListener());
+        MinecraftForge.EVENT_BUS.register(new RevTradeListener());
         MinecraftForge.EVENT_BUS.register(new PartyCommands());
         MinecraftForge.EVENT_BUS.register(new NoDTHUD());
+        MinecraftForge.EVENT_BUS.register(new DungeonFloorCommands());
+
+        // register commands
+        ClientCommandHandler.instance.registerCommand(new CommandEschat());
+        ClientCommandHandler.instance.registerCommand(new NoDT());
     }
 }

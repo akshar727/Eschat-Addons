@@ -1,5 +1,6 @@
 package com.bunny.eschatAddons.config;
 
+import com.bunny.eschatAddons.features.DungeonFloorCommands;
 import net.minecraftforge.common.config.Configuration;
 import java.io.File;
 
@@ -20,6 +21,8 @@ public class ConfigHandler {
 
     public static boolean PartyCommandsEnabled;
     public static boolean PartyInvEnabled;
+    public static boolean RevTradeListenerEnabled;
+    public static boolean DungeonFloorCommandsEnabled;
 
     public static void loadConfig(File file) {
         config = new Configuration(file);
@@ -45,6 +48,10 @@ public class ConfigHandler {
 
         PartyCommandsEnabled = config.get("PartyCommands", "Enabled", false, "Are the party commands Enabled?").getBoolean();
         PartyInvEnabled = config.get("PartyCommands", "InvEnabled", false, "Is !inv enabled?").getBoolean();
+
+        // dungeon floor commands
+        DungeonFloorCommandsEnabled = config.get("Dungeon Floor Commands", "Enabled", true, "!f1-7, !m1-7 enabled?").getBoolean();
+        RevTradeListenerEnabled = config.get("Rev Trader Commands", "Enabled", false, "Send message when mini or boss spawns?").getBoolean();
     }
 
     public static void saveConfig() {
@@ -70,6 +77,9 @@ public class ConfigHandler {
         config.get("PartyCommands", "Enabled", false, "Are the party commands Enabled?").set(PartyCommandsEnabled);
         config.get("PartyCommands", "InvEnabled", false, "Is !inv enabled?").set(PartyInvEnabled);
 
+        //dungeon floor commands
+        config.get("Dungeon Floor Commands", "Enabled", false, "!f1-7, !m1-7 enabled?").set(DungeonFloorCommandsEnabled);
+        config.get("Rev Trader Commands", "Enabled", false, "Send message when mini or boss spawns?").set(RevTradeListenerEnabled);
         // Force writing the changes
         config.save();
         System.out.println("Configuration saved successfully.");
